@@ -1,19 +1,39 @@
-plugins {
-    id 'java'
+buildscript {
+    // ext: build.gradle 에서 사용하는 전역변수를 설정하겠다는 의미임.
+    ext {
+        springBootVersion = '2.1.7.RELEASE' // springBootVersion 전역변수 생성, 값을 2.1.7.Release 로 지정함.
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        // spring-boot-gradle-plugin 이라는 스프링 부트 그레이들 플러그인의 2.1.7.Release 를 의존성으로 받는다는 의미이다.
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
+
+// java와 spring을 사용하기 위해 필요한 필수적인 플러그인이다.
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 group 'com.eagle25.prictice'
 version '1.0-SNAPSHOT'
 
+// dependency를 받을 원격 저장소를 지정
 repositories {
+    // 기본적으로 mavenCentral을 많이 사용함.
     mavenCentral()
+    // mavenCentral의 업로드 난이도 때문에 jcenter를 사용하는 추세이기도 함.
+    // jcenter에 라이브러리를 업로드 하면 mavenCentral에도 자동으로 업로드 되도록 자동화 되어있음.
+    jcenter()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-}
-
-test {
-    useJUnitPlatform()
+    // 프로젝트 개발에 필요한 의존성들을 선언하는 곳.
+    // 주의: 의존성 버전을 명시할 경우, SpringBootVersion을 따르지 않게 된다. 버전은 지정하지 말자.
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
