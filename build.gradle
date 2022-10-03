@@ -34,6 +34,7 @@ repositories {
 dependencies {
     // 프로젝트 개발에 필요한 의존성들을 선언하는 곳.
     // 주의: 의존성 버전을 명시할 경우, SpringBootVersion을 따르지 않게 된다. 버전은 지정하지 말자.
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.projectlombok:lombok')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }
