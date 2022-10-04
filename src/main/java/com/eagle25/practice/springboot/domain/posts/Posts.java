@@ -32,6 +32,11 @@ public class Posts {
         this.author = author;
     }
 
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
     /*
     Entity class에서는 절대로 Setter를 생성하지 않는다.
         - 이유
