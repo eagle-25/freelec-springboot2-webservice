@@ -1,5 +1,6 @@
 package com.eagle25.practice.springboot.domain.posts;
 
+import com.eagle25.practice.springboot.domain.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor // 기본 생성자 자동 추가. (public Posts() {}와 같은 효과임.)
 @Entity // 테이블과 링크될 클래스를 나타냄.
-public class Posts {
+public class Posts extends BaseTimeEntity {
     @Id // 해당 테이블의 PK를 나타냄.
     @GeneratedValue(strategy = GenerationType.IDENTITY) // pk의 생성 규칙을 나타냄.
     private long id;
