@@ -1,6 +1,9 @@
 package com.eagle25.practice.springboot.domain.posts;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 
 /*
@@ -13,4 +16,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostsRepository extends JpaRepository<Posts, Long> { // JpaRepository<Entity class, PK Type>
     //JPARepository<Entity class, PK type>을 상속하면 자동으로 CRUD 메소드가 생성된다.
+    @Query("SELECT p FROM Posts p ORDER BY p.id DESC")
+    List<Posts> findAllDesc();
 }

@@ -3,13 +3,16 @@ package com.eagle25.practice.springboot.service.posts;
 
 import com.eagle25.practice.springboot.domain.posts.Posts;
 import com.eagle25.practice.springboot.domain.posts.PostsRepository;
+import com.eagle25.practice.springboot.web.dto.PostsListResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsSaveRequestDTO;
 import com.eagle25.practice.springboot.web.dto.PostsUpdateRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 /*
@@ -66,5 +69,12 @@ public class PostsService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
         return new PostsResponseDTO(entity);
+    }
+
+    @Transactional(readOnly=true) // readonly의 값을 true로 주면, 트랜잭션 범위는 유지하되, 조회 기능만 남겨두어 조회 속도가 개선된다.
+    public List<PostsListResponseDTO> findAllDesc() {
+        return postsRepository.findAllDesc().stream()
+                .map(PostsListResponseDTO::new)// .map(posts -> new PostsListResponseDTO(posts))의 lambda식
+                .collect((Collectors.toList()));
     }
 }
