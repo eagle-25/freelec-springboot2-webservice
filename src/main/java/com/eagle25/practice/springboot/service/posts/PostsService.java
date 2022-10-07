@@ -77,4 +77,13 @@ public class PostsService {
                 .map(PostsListResponseDTO::new)// .map(posts -> new PostsListResponseDTO(posts))의 lambda식
                 .collect((Collectors.toList()));
     }
+
+    @Transactional
+    public void delete(Long id) {
+        Posts posts = postsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+        // 존재하는 Posts인지 확인을 위해 엔티티 조회 후 그대로 삭제한다.
+
+        postsRepository.delete(posts);
+    }
 }
