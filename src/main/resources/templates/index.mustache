@@ -1,9 +1,37 @@
 {{>layout/header}}
     <h1>스프링 부트로 시작하는 웹 서비스 Ver.2</h1>
     <div class="col-md-12">
+        <!-- 로그인 기능 영역 -->
         <div class="row">
             <div class="col-md-6">
                 <a href="/posts/save" role="button" class="btn btn-primary">글 등록</a>
+                <!--
+                #userName
+                mustache는 if문을 제공하지 않는다. 항상 최종값만 넘겨줘야 한다.
+                그래서 userName이 있다면 userName을 노출시키도록 구성했다.
+                -->
+                {{#userName}}
+                    Logged in as: <span id="user">{{userName}}</span>
+                    <!--
+                    href="/logout"
+                    Spring Security에서 기본적으로 제공하는 로그아웃 URL이다. 개발자는 저 url에 해당하는 컨트롤러를 별도로 만들 필요가 없다.
+                    참고사항: SecurityConfig 클래스에서 url을 변경할 수 있음.
+                    -->
+                    <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+                {{/userName}}
+                <!--
+                ^userName
+                머스태치에서 해당 값이 존재하지 않는 경우에는 ^를 사용함.
+                userName이 없다면 로그인 버튼을 노출시키도록 구성함.
+                -->
+                {{^userName}}
+                    <!--
+                     a href="/oauth2/authorization/google
+                     스프링 시큐리티에서 기본적으로 제공하는 url이다.
+                     로그아웃 url과 마찬가지로 개발자가 별도의 컨트롤러를 생성할 필요가 없다.
+                     -->
+                    <a href="/oauth2/authorization/google" class="btn bnt-success active" role="button">Google Login</a>
+                {{/userName}}
             </div>
         </div>
         <br>
