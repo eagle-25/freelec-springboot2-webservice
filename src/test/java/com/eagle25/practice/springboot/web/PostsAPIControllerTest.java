@@ -5,7 +5,6 @@ import com.eagle25.practice.springboot.domain.posts.PostsRepository;
 import com.eagle25.practice.springboot.web.dto.PostsSaveRequestDTO;
 import com.eagle25.practice.springboot.web.dto.PostsUpdateRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.geometry.Pos;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
