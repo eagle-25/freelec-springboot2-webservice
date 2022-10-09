@@ -1,9 +1,13 @@
 package com.eagle25.practice.springboot.web;
 
+import com.eagle25.practice.springboot.config.auth.SecurityConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -17,7 +21,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 
 // 스프링 테스트 어노테이션 중, Web(Spring MVC)에 집중할 수 있는 어노테이션이다.
-@WebMvcTest
+@WebMvcTest(controllers = HelloController.class,
+excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = SecurityConfig.class)
+})
+/**
+ * @WebMvcTest excludeFilters
+ *
+ * @WebMvcTests는 WebSecurityConfigurerAdapter, WebMvcConfigurer를 비롯한 @ControllerAdvice, @Controller를 읽는다.
+ * 즉, @Repository, @Service, @Component는 스캔 대상이 아니다.
+ *
+ * SecurityConfig을 제외하지 않을 경우, SecurityConfig 생성을 위한 CustomOAuthUserService는 읽을 수 없어 에러가 발생한다.
+ * 따라서, excludeFilters를 사용해 SecurityConfig을 스캔 대상에서 제외하도록 명시적으로 지정하였다.
+ */
 public class HelloControllerTest {
 
     // 스프링이 관리하는 Bean을 주입받는다.
@@ -26,6 +43,7 @@ public class HelloControllerTest {
     // 스프링 MVC 테스트의 시작점이며, 이 클래스를 통해 HTTP GET, Post 등에 대한 API테스트를 할 수 있다.
     private MockMvc mvc;
 
+    @WithMockUser(roles="USER")
     @Test
     public void hello가_리턴된다() throws Exception {
         String hello = "hello";
@@ -35,6 +53,7 @@ public class HelloControllerTest {
                 .andExpect(content().string(hello));
     }
 
+    @WithMockUser(roles="USER")
     @Test
     public void helloDTO가_리턴된다() throws Exception {
         String name = "hello";
