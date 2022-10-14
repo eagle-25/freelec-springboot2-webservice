@@ -18,6 +18,23 @@ cache:
 # Master branch에 push 되었을 때 실행하는 명령어이다.
 script: "./gradlew clean build"
 
+before_deploy: #deploy 명령어가 실행되기 전에 수행됨.
+  - zip -r freelec-springboot2-webservice * #codeDeploy는 .jar파일을 인식하지 못한다. Jar + 기타 설정 파일들을 모아 압축한다.
+  - mkdir -p deploy
+  - mv freelec-springboot2-webservice.zip deploy/freelec-springboot2-webservice.zip
+
+deploy:
+  -provider: s3
+  access_key_id: $AWS_ACCESS_KEY #Travis repo settings에 설정된 값
+  secret_access_key: $AWS_SECRET_KEY #Travis repo settings에 설정된 값
+
+  bucket: eagle25-freelec-springboot-build # S3 bucket
+  region: us-east-1
+  skip_cleanup: true
+  acl: private # zip 파일 접근을 private으로
+  local_dir: deploy #이 항목에서 지정된 위치에 있는 파일들만 s3로 전송함.
+  wait-until-deployed: true
+
 notifications:
   email:
     recipients:
