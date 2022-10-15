@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acd19f19-bc2e-45fa-9555-a84db53ff77a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eagle25/practice/springboot/web/dto/HelloResponseDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/eagle25/practice/springboot/web/dto/HelloResponseDTOTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="acd19f19-bc2e-45fa-9555-a84db53ff77a" name="Changes" comment="add(hello): add HelloResponseDTO&#10;&#10;add HelloResponseDTO controller&#10;add HelloResponseDTO test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +39,12 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="freelec-springboot2-website" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="verification" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="freelec-springboot2-website" type="f1a62948:ProjectNode" />
                 <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
               </path>
               <path>
@@ -60,6 +62,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
+        <option value="AnnotationType" />
         <option value="Class" />
       </list>
     </option>
@@ -86,6 +90,7 @@
     "RequestMappingsPanelWidth1": "75",
     "WebServerToolWindowFactoryState": "false",
     "com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupConfigurable": "ALL",
+    "last_opened_file_path": "/Users/seung-joon/Documents/dev/spring-practice/freelec-springboot2-website/src/test/resources",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -94,12 +99,29 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors",
+    "settings.editor.selected.configurable": "editing.templates",
     "spring.configuration.checksum": "a9b1de694f640f3326abc2d990da9573"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mariadb"
+    ]
   }
 }]]></component>
-  <component name="RunManager" selected="Gradle.HelloResponseDTOTest.롬북_기능_테스트">
-    <configuration name="HelloControllerTest.hello가_리턴된다" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/resources" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/templates" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.eagle25.practice.springboot.config" />
+      <recent name="com.eagle25.practice.springboot.domain" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.Application">
+    <configuration name="IndexControllerTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -112,7 +134,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.eagle25.practice.springboot.web.HelloControllerTest.hello가_리턴된다&quot;" />
+            <option value="&quot;com.eagle25.practice.springboot.web.IndexControllerTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -122,7 +144,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="HelloResponseDTOTest.롬북_기능_테스트" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="IndexControllerTest.메인페이지_로딩" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -135,12 +157,79 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.eagle25.practice.springboot.web.dto.HelloResponseDTOTest.롬북_기능_테스트&quot;" />
+            <option value="&quot;com.eagle25.practice.springboot.web.IndexControllerTest.메인페이지_로딩&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="PostRepositoryTest.BaseTimeEntity_등록" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.eagle25.practice.springboot.domain.posts.PostRepositoryTest.BaseTimeEntity_등록&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="PostsAPIControllerTest.Posts_수정된다" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.eagle25.practice.springboot.web.PostsAPIControllerTest.Posts_수정된다&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="freelec-springboot2-website [test]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
@@ -160,9 +249,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.HelloResponseDTOTest.롬북_기능_테스트" />
-        <item itemvalue="Gradle.HelloControllerTest.hello가_리턴된다" />
         <item itemvalue="Spring Boot.Application" />
+        <item itemvalue="Gradle.freelec-springboot2-website [test]" />
+        <item itemvalue="Gradle.IndexControllerTest" />
+        <item itemvalue="Gradle.IndexControllerTest.메인페이지_로딩" />
+        <item itemvalue="Gradle.PostRepositoryTest.BaseTimeEntity_등록" />
       </list>
     </recent_temporary>
   </component>
@@ -176,7 +267,8 @@
       <updated>1664529514815</updated>
       <workItem from="1664529516653" duration="1901000" />
       <workItem from="1664778127807" duration="1405000" />
-      <workItem from="1664789379200" duration="1752000" />
+      <workItem from="1664789379200" duration="15762000" />
+      <workItem from="1664953203846" duration="42068000" />
     </task>
     <task id="LOCAL-00001" summary="typo(gradle): edit typo&#10;&#10;edit typo group id&#10;&#10;BRAKE CHANGES:&#10; prictice -&gt; practice">
       <created>1664612396221</created>
@@ -199,7 +291,35 @@
       <option name="project" value="LOCAL" />
       <updated>1664788939565</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="refactor(gradle): change gradle version&#10;&#10;change gradle version&#10;7.4 -&gt; 4.10.2&#10;&#10;BREAK_CHANGES:&#10;change keywords in build.gradle&#10;implementation -&gt; compile">
+      <created>1664791387562</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1664791387562</updated>
+    </task>
+    <task id="LOCAL-00005" summary="add(hello): add HelloResponseDTO&#10;&#10;add HelloResponseDTO controller&#10;add HelloResponseDTO test">
+      <created>1664793306978</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1664793306978</updated>
+    </task>
+    <task id="LOCAL-00006" summary="feat(Post): add PostService&#10;&#10;add PostService&#10;enable H2 Logging with MySQL5 format">
+      <created>1664806410929</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1664806410929</updated>
+    </task>
+    <task id="LOCAL-00007" summary="feat(Posts): add Posts CRUD Service&#10;&#10;add Posts CRUD Service">
+      <created>1664851431115</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1664851431115</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -217,10 +337,15 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="false" />
     <MESSAGE value="typo(gradle): edit typo&#10;&#10;edit typo group id&#10;&#10;BRAKE CHANGES:&#10; prictice -&gt; practice" />
     <MESSAGE value="add(hello): add HelloController&#10;&#10;+ Application Initialization&#10;+ HelloController&#10;+ HelloControllerTest" />
     <MESSAGE value="add(gitignore): add ignore target&#10;&#10;add .idea dir to ignore." />
-    <option name="LAST_COMMIT_MESSAGE" value="add(gitignore): add ignore target&#10;&#10;add .idea dir to ignore." />
+    <MESSAGE value="refactor(gradle): change gradle version&#10;&#10;change gradle version&#10;7.4 -&gt; 4.10.2&#10;&#10;BREAK_CHANGES:&#10;change keywords in build.gradle&#10;implementation -&gt; compile" />
+    <MESSAGE value="add(hello): add HelloResponseDTO&#10;&#10;add HelloResponseDTO controller&#10;add HelloResponseDTO test" />
+    <MESSAGE value="feat(Post): add PostService&#10;&#10;add PostService&#10;enable H2 Logging with MySQL5 format" />
+    <MESSAGE value="feat(Posts): add Posts CRUD Service&#10;&#10;add Posts CRUD Service" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(Posts): add Posts CRUD Service&#10;&#10;add Posts CRUD Service" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
