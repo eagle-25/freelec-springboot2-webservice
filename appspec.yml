@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source : /
-    destination: /home/ec2-user/app/step2/zip
+    destination: /home/ec2-user/app/step3/zip
     overwrite: yes
 
 permissions:
@@ -12,7 +12,13 @@ permissions:
     group: ec2-user
 
 hooks:
-  ApplicationStart:
-    - location: deploy.sh
+  AfterInstall:
+    - location: stop.sh # nginx와 연결되어 있지 않은 스프링부트를 종료시킨다.
       timeout: 60
       runas: ec2-user
+  ApplicationStart:
+    - location: deploy.sh #nginx와 연결되어 있지 않은 port로 새로운 버전의 스프링부트를 시작한다.
+      timeout: 60
+      runas: ec2-user
+  ValidateService:
+    - location: health.sh # 새 스프링부트가 정상적으로 연결되어 있는지 확인한다.
