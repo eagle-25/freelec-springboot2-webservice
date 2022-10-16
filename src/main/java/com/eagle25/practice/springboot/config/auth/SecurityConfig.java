@@ -18,7 +18,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()// h2 화면을 사용하기 위해 srf, headers.frameOption을 disable 시켜준다.
                 .and()
                     .authorizeRequests() // url별 권한 관리를 설정하는 옵션의 시작점
-                    .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**").permitAll() // "/" 등 지정된 URL들은 permitAll() 옵션을 통해 전체 열람 권한을 부여함.
+                    .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/profile").permitAll() // "/" 등 지정된 URL들은 permitAll() 옵션을 통해 전체 열람 권한을 부여함.
                     .antMatchers("/api/v1/**").hasRole(Role.USER.name()) // /api/v1/** 주소를 가진 API는 USER 권한을 가진 사람만 가능하도록 함.
                     .anyRequest() // 설정된 값들 이외의 URL
                         .authenticated() // 나머지 URL은 인증된(로그인한) 사용자만 접근을 허용함.
