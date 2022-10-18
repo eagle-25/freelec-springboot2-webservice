@@ -51,6 +51,10 @@ public class PostsService {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
+        if(!posts.getAuthor().equals(requestDTO.getSessionUser().getEmail())) {
+            throw new IllegalArgumentException("현재 로그인 한 사용자와 글을 작성한 사용자의 계정이 다릅니다.");
+        }
+
         posts.update(requestDTO.getTitle(), requestDTO.getContent());
 
         return id;

@@ -31,7 +31,14 @@ public class PostAPIController {
     }
 
     @PutMapping("/api/v1/posts/{id}")
-    public Long update(@PathVariable Long id, @RequestBody PostsUpdateRequestDTO requestDTO) {
+    public Long update(@PathVariable Long id, @RequestBody Map<String, Object> req, @LoginUser SessionUser user) {
+
+        var requestDTO = PostsUpdateRequestDTO.builder()
+                .title(req.get("title").toString())
+                .content(req.get("content").toString())
+                .sessionUser(user)
+                .build();
+
         return postsService.update(id, requestDTO);
     }
 
