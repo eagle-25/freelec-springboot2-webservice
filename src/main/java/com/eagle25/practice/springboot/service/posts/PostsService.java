@@ -9,6 +9,7 @@ import com.eagle25.practice.springboot.web.dto.PostsResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsSaveRequestDTO;
 import com.eagle25.practice.springboot.web.dto.PostsUpdateRequestDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,10 +69,20 @@ public class PostsService {
      */
 
     public PostsResponseDTO findById (Long id) {
-        Posts entity = postsRepository.findById(id)
+        var entity = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
-        return new PostsResponseDTO(entity);
+        var user = userRepository
+                .findByEmail(entity.getAuthor())
+                .get();
+
+        return PostsResponseDTO.builder()
+                .id(entity.getId())
+                .title(entity.getTitle())
+                .content(entity.getContent())
+                .authorEmail(entity.getAuthor())
+                .authorName(user.getName())
+                .build();
     }
 
     @Transactional(readOnly=true) // readonly의 값을 true로 주면, 트랜잭션 범위는 유지하되, 조회 기능만 남겨두어 조회 속도가 개선된다.
