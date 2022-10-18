@@ -3,6 +3,7 @@ package com.eagle25.practice.springboot.service.posts;
 
 import com.eagle25.practice.springboot.domain.posts.Posts;
 import com.eagle25.practice.springboot.domain.posts.PostsRepository;
+import com.eagle25.practice.springboot.domain.users.UserRepository;
 import com.eagle25.practice.springboot.web.dto.PostsListResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsSaveRequestDTO;
@@ -34,6 +35,8 @@ lombok의 library인 @RequiredArgsConstructor를 사용하면 클래스 내에 �
 @Service
 public class PostsService {
     private final PostsRepository postsRepository;
+
+    private final UserRepository userRepository;
 
     @Transactional
     public Long save(PostsSaveRequestDTO requestDTO) {
@@ -74,7 +77,12 @@ public class PostsService {
     @Transactional(readOnly=true) // readonly의 값을 true로 주면, 트랜잭션 범위는 유지하되, 조회 기능만 남겨두어 조회 속도가 개선된다.
     public List<PostsListResponseDTO> findAllDesc() {
         return postsRepository.findAllDesc().stream()
-                .map(PostsListResponseDTO::new)// .map(posts -> new PostsListResponseDTO(posts))의 lambda식
+                .map(post -> PostsListResponseDTO.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .authorInfo(userRepository.findByEmail(post.getAuthor()).get().getName() + " (" + post.getAuthor() + ")")
+                        .modifiedDate(post.getModifiedDate())
+                        .build())
                 .collect((Collectors.toList()));
     }
 
