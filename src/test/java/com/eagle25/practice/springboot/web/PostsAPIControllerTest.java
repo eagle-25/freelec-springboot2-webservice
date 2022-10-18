@@ -1,10 +1,17 @@
 package com.eagle25.practice.springboot.web;
 
+import com.eagle25.practice.springboot.config.auth.LoginUser;
+import com.eagle25.practice.springboot.config.auth.dto.SessionUser;
 import com.eagle25.practice.springboot.domain.posts.Posts;
 import com.eagle25.practice.springboot.domain.posts.PostsRepository;
+import com.eagle25.practice.springboot.domain.users.Role;
+import com.eagle25.practice.springboot.domain.users.User;
+import com.eagle25.practice.springboot.domain.users.UserRepository;
 import com.eagle25.practice.springboot.web.dto.PostsSaveRequestDTO;
 import com.eagle25.practice.springboot.web.dto.PostsUpdateRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.var;
+import net.minidev.json.JSONArray;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,11 +21,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
@@ -50,6 +61,9 @@ public class PostsAPIControllerTest {
     private PostsRepository postsRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private WebApplicationContext context;
 
     private MockMvc mvc;
@@ -79,19 +93,31 @@ public class PostsAPIControllerTest {
         //given
         String title = "title";
         String content = "content";
+        String authorEmail = "abc@example.com";
+
         PostsSaveRequestDTO requestDTO = PostsSaveRequestDTO.builder()
                 .title(title)
                 .content(content)
-                .author("author")
+                .author(authorEmail)
                 .build();
+
+
+        var httpSession = new MockHttpSession();
+        httpSession.setAttribute("user", new SessionUser(User.builder()
+                .name("testUser")
+                .email(authorEmail)
+                .picture("")
+                .role(Role.USER)
+                .build()));
 
         String url = "http://localhost:" + port + "/api/v1/posts";
 
         //when
         mvc.perform((post(url) // 생성된 MockMVC 인스턴스를 생성한다.
+                .session(httpSession)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(new ObjectMapper().writeValueAsString(requestDTO))))
-                        .andExpect(status().isOk());
+                    .andExpect(status().isOk());
 
         //then
         List<Posts> all = postsRepository.findAll();
@@ -99,19 +125,32 @@ public class PostsAPIControllerTest {
                 .isEqualTo(title);
         assertThat(all.get(0).getContent())
                 .isEqualTo(content);
+        assertThat(all.get(0).getAuthor())
+                .isEqualTo(authorEmail);
     }
 
     @Test
     @WithMockUser(roles="USER")
     public void Posts_수정된다() throws Exception {
         //given
+        String authorEmail = "abc@example.com";
+
         Posts savedPosts = postsRepository.save(Posts.builder()
                 .title("Title")
                 .content("Content")
-                .author("author")
+                .author(authorEmail)
                 .build());
 
+        var httpSession = new MockHttpSession();
+        httpSession.setAttribute("user", new SessionUser(User.builder()
+                .name("testUser")
+                .email(authorEmail)
+                .picture("")
+                .role(Role.USER)
+                .build()));
+
         Long updateId = savedPosts.getId();
+
         String expectedTitle = "title2";
         String expectedContent = "content2";
 
@@ -122,10 +161,9 @@ public class PostsAPIControllerTest {
 
         String url = "http://localhost:" + port + "/api/v1/posts/" + updateId;
 
-        HttpEntity<PostsUpdateRequestDTO> requestEntity = new HttpEntity<>(requestDTO);
-
         //when
         mvc.perform(put(url)
+                .session(httpSession)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(new ObjectMapper().writeValueAsString(requestDTO)))
                         .andExpect(status().isOk());
