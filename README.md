@@ -56,9 +56,10 @@
 2. 배포 자동화
 3. nginX를 사용한 무중단 배포
 
+
 ### 1. 운영
 
-<img width="839" alt="image" src="https://user-images.githubusercontent.com/110667795/196603164-5934f66a-f9a1-49df-9b8e-d0431fb5dadb.png">
+<img width="539" alt="image" src="https://user-images.githubusercontent.com/110667795/196603164-5934f66a-f9a1-49df-9b8e-d0431fb5dadb.png">
 
 1. 클라이언트는 Route 53에 등록된 'peter-home-automation.link' 도메인을 통해 서버의 ip를 얻습니다.
 2. 얻은 ip를 통해 application이 운영되고 있는 ec2에 http로 접근합니다.
@@ -66,7 +67,7 @@
 
 ### 2. 배포 자동화
 
-<img width="572" alt="image" src="https://user-images.githubusercontent.com/110667795/196603377-59da579e-81ed-42cd-bb78-408e26e989f6.png">
+<img width="437" alt="image" src="https://user-images.githubusercontent.com/110667795/196605461-dbb9aced-8a35-4283-9498-77a23296a916.png">
 
 1. 개발자는 github repository의 origin/master에 코드를 push합니다.
 2. 이 동작은 Travis CI의 빌드에 트리거 됩니다. 트리거 된 빌드는 특정 절차를 통해 .jar를 만듭니다.
@@ -82,6 +83,7 @@
 2. .appspec.yml 파일에서 지정된 switch.sh 스크립트에 의해 매 배포시마다 8081과 8082의 포트가 스위칭됩니다.
 3. 포트 스위칭 시 /etc/nginx/conf.d/service-url.inc 파일에 저장되어 있는 service_url의 포트를 변경합니다.
 
+
 ### 인프라 전체 구성도
-상기 요소를 모두 종합하여 나타낸 인프라 구성도는 다음과 같습니다.
-<img width="717" alt="image" src="https://user-images.githubusercontent.com/110667795/196602858-71cd41e4-4ce5-415d-80a2-ec4797651144.png">
+상기 항목을 모두 종합하여 나타낸 인프라 구성도는 다음과 같습니다.
+<img width="643" alt="image" src="https://user-images.githubusercontent.com/110667795/196605483-0bfbfc63-3319-4384-a36e-3a007c90479a.png">
