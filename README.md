@@ -70,8 +70,7 @@
 <img width="437" alt="image" src="https://user-images.githubusercontent.com/110667795/196605461-dbb9aced-8a35-4283-9498-77a23296a916.png">
 
 1. 개발자는 github repository의 origin/master에 코드를 push합니다.
-2. 이 동작은 Travis CI의 빌드에 트리거 됩니다. 트리거 된 빌드는 특정 절차를 통해 .jar를 만듭니다.
-3. 생성된 .jar은 s3에 저장됩니다.
+2. 이 동작은 Travis CI의 빌드에 트리거 됩니다. 트리거 된 빌드는 .jar를 생성한 후, s3에 저장합니다.
 4. Travis CI의 빌드가 완료되면 CodeDeploy를 트리거 합니다.
 5. codeDeploy는 새로운 .jar 파일을 s3로부터 받아온 뒤, .appspec.yml 파일에서 지정된 스크립트를 사용하여 배포합니다.
 
@@ -85,5 +84,5 @@
 
 
 ### 인프라 전체 구성도
-상기 항목을 모두 종합하여 나타낸 인프라 구성도는 다음과 같습니다.
+상기 항목을 종합하여 나타낸 인프라 구성도는 다음과 같습니다.
 <img width="643" alt="image" src="https://user-images.githubusercontent.com/110667795/196605483-0bfbfc63-3319-4384-a36e-3a007c90479a.png">
