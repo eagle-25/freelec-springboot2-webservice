@@ -49,9 +49,9 @@ public class PostAPIController {
     }
 
     @DeleteMapping("/api/v1/posts/{id}")
-    public Long delete(@PathVariable Long id)
+    public Long delete(@PathVariable Long id, @LoginUser SessionUser user)
     {
-        postsService.delete(id);
+        postsService.delete(id, user);
         return id;
     }
 }

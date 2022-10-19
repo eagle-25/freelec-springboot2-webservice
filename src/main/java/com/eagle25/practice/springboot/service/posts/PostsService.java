@@ -1,6 +1,7 @@
 package com.eagle25.practice.springboot.service.posts;
 
 
+import com.eagle25.practice.springboot.config.auth.dto.SessionUser;
 import com.eagle25.practice.springboot.domain.posts.Posts;
 import com.eagle25.practice.springboot.domain.posts.PostsRepository;
 import com.eagle25.practice.springboot.domain.users.UserRepository;
@@ -52,7 +53,7 @@ public class PostsService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
         if(!posts.getAuthor().equals(requestDTO.getSessionUser().getEmail())) {
-            throw new IllegalArgumentException("현재 로그인 한 사용자와 글을 작성한 사용자의 계정이 다릅니다.");
+            throw new IllegalArgumentException("수정 실패: 현재 로그인 한 사용자와 글을 작성한 사용자의 계정이 다릅니다.");
         }
 
         posts.update(requestDTO.getTitle(), requestDTO.getContent());
@@ -102,10 +103,15 @@ public class PostsService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, SessionUser user) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
         // 존재하는 Posts인지 확인을 위해 엔티티 조회 후 그대로 삭제한다.
+
+        if(!posts.getAuthor().equals(user.getEmail()))
+        {
+            throw new IllegalArgumentException("삭제 실패: 현재 로그인 한 사용자와 글을 작성한 사용자의 계정이 다릅니다.");
+        }
 
         postsRepository.delete(posts);
     }
