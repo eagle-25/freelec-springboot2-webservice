@@ -48,16 +48,40 @@
 
 ## 인프라
 
-인프라 구축을 위해 사용한 AWS 서비스는 다음과 같습니다.
+이 항목에서는 freelec-springboot2-webservice 프로젝트의 운영을 위해 구성한 인프라에 대해 설명합니다.
 
-1. EC2 (t2.micro)
-2. RDS (MariaDB)
-3. Route 53
-4. Travis CI
-3. CodeDeploy
+설명은 다음 세 가지의 항목으로 구분하여 설명합니다.
 
-## 운영 환경 구성
+1. 운영
+2. 배포 자동화
+3. nginX를 사용한 무중단 배포
 
-무중단 배포를 구현하기 위해 다음과 같은 서비스를 사용하였습니다.
+### 1. 운영
 
-1. nginX 
+<img width="839" alt="image" src="https://user-images.githubusercontent.com/110667795/196603164-5934f66a-f9a1-49df-9b8e-d0431fb5dadb.png">
+
+1. 클라이언트는 Route 53에 등록된 'peter-home-automation.link' 도메인을 통해 서버의 ip를 얻습니다.
+2. 얻은 ip를 통해 application이 운영되고 있는 ec2에 http로 접근합니다.
+3. app은 rds에서 운영되는 mariaDB에 데이터를 저장합니다.
+
+### 2. 배포 자동화
+
+<img width="572" alt="image" src="https://user-images.githubusercontent.com/110667795/196603377-59da579e-81ed-42cd-bb78-408e26e989f6.png">
+
+1. 개발자는 github repository의 origin/master에 코드를 push합니다.
+2. 이 동작은 Travis CI의 빌드에 트리거 됩니다. 트리거 된 빌드는 특정 절차를 통해 .jar를 만듭니다.
+3. 생성된 .jar은 s3에 저장됩니다.
+4. Travis CI의 빌드가 완료되면 CodeDeploy를 트리거 합니다.
+5. codeDeploy는 새로운 .jar 파일을 s3로부터 받아온 뒤, .appspec.yml 파일에서 지정된 스크립트를 사용하여 배포합니다.
+
+### 3. nginX를 사용한 무중단 배포
+
+<img width="374" alt="image" src="https://user-images.githubusercontent.com/110667795/196604056-61c8881b-25cb-48b2-9b13-bd30a3587fc7.png">
+
+1. nginX는 80번 tcp port를 listening 합니다.
+2. .appspec.yml 파일에서 지정된 switch.sh 스크립트에 의해 매 배포시마다 8081과 8082의 포트가 스위칭됩니다.
+3. 포트 스위칭 시 /etc/nginx/conf.d/service-url.inc 파일에 저장되어 있는 service_url의 포트를 변경합니다.
+
+### 인프라 전체 구성도
+상기 요소를 모두 종합하여 나타낸 인프라 구성도는 다음과 같습니다.
+<img width="717" alt="image" src="https://user-images.githubusercontent.com/110667795/196602858-71cd41e4-4ce5-415d-80a2-ec4797651144.png">
