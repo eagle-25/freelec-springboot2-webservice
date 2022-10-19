@@ -82,7 +82,7 @@ public class PostsAPIControllerTest {
     }
 
     @Test
-    @WithMockUser(roles="USER")
+    @WithMockUser(roles="GUEST")
     /**
      * @WithMockUser(roles="USER")
      * 인증된 모의(가짜) 사용자를 만들어 테스트에 사용한다.
@@ -130,7 +130,7 @@ public class PostsAPIControllerTest {
     }
 
     @Test
-    @WithMockUser(roles="USER")
+    @WithMockUser(roles="GUEST")
     public void Posts_수정된다() throws Exception {
         //given
         String authorEmail = "abc@example.com";
