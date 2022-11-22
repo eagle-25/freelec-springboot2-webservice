@@ -5,6 +5,7 @@ import com.eagle25.practice.springboot.config.auth.dto.SessionUser;
 import com.eagle25.practice.springboot.domain.posts.Posts;
 import com.eagle25.practice.springboot.domain.posts.PostsRepository;
 import com.eagle25.practice.springboot.domain.users.UserRepository;
+import com.eagle25.practice.springboot.service.attachments.AttachmentsService;
 import com.eagle25.practice.springboot.web.dto.PostsListResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsSaveRequestDTO;
@@ -14,10 +15,10 @@ import lombok.var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 /*
 @RequiredArgsConstructor를 사용하는 이유
 
@@ -34,15 +35,33 @@ import java.util.stream.Collectors;
 lombok의 library인 @RequiredArgsConstructor를 사용하면 클래스 내에 선언된 모든 필드들을 매개변수로 취하는 생성자를 자동으로 만들어 준다.
 필드 변경에 따른 생성자를 직접 수정할 필요가 없어 필드 변경이 편해진다.
  */
+@RequiredArgsConstructor
 @Service
 public class PostsService {
     private final PostsRepository postsRepository;
-
+    private final AttachmentsService _attachmentsService;
     private final UserRepository userRepository;
 
     @Transactional
-    public Long save(PostsSaveRequestDTO requestDTO) {
-        return postsRepository.save(requestDTO.toEntity())
+    public Long save(PostsSaveRequestDTO req) {
+
+        var attachmentUrl = "";
+
+        try {
+            if(req.getMultipartFile() != null) {
+                attachmentUrl =  _attachmentsService.upload(req.getMultipartFile());
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return postsRepository.save(Posts.builder()
+                .title(req.getTitle())
+                .content(req.getContent())
+                .author(req.getAuthor())
+                .attachmentUrl(attachmentUrl)
+                        .build())
                 .getId();
     }
 
@@ -87,6 +106,7 @@ public class PostsService {
                 .content(entity.getContent())
                 .authorEmail(entity.getAuthor())
                 .authorName(user.getName())
+                .attachmentUrl(entity.getAttachmentUrl())
                 .build();
     }
 

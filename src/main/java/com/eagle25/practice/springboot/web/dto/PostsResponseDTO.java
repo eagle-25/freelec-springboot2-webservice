@@ -11,16 +11,18 @@ public class PostsResponseDTO {
     private String content;
     private String authorEmail;
     private String authorName;
+    private String attachmentUrl;
 
     // 굳이 모든 필드를 가진 생성자가 필요하지 않다.
     // 간단하게 Entity를 받아 처리하도록 한다.
     @Builder
-    public PostsResponseDTO(Long id, String title, String content, String authorEmail, String authorName)
+    public PostsResponseDTO(Long id, String title, String content, String authorEmail, String authorName, String attachmentUrl)
     {
         this.id = id;
         this.title = title;
         this.content = content;
         this.authorEmail = authorEmail;
         this.authorName = authorName;
+        this.attachmentUrl = attachmentUrl;
     }
 }

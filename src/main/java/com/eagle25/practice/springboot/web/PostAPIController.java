@@ -9,6 +9,7 @@ import com.eagle25.practice.springboot.web.dto.PostsUpdateRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.var;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -19,12 +20,15 @@ public class PostAPIController {
     private final PostsService postsService;
 
     @PostMapping("/api/v1/posts")
-    public Long save(@RequestBody Map<String, Object> req, @LoginUser SessionUser user) {
+    public Long save(@RequestParam("title") String title,
+                     @RequestParam("content") String content,
+                     @RequestParam("attachment") MultipartFile file, @LoginUser SessionUser user) {
 
         var data = PostsSaveRequestDTO.builder()
-                .title(req.get("title").toString())
+                .title(title)
                 .author(user.getEmail())
-                .content(req.get("content").toString())
+                .content(content)
+                .multipartFile(file)
                 .build();
 
         return postsService.save(data);
