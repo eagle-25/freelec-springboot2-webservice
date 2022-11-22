@@ -7,7 +7,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.eagle25.practice.springboot.domain.attachment.Attachment;
+import com.eagle25.practice.springboot.domain.attachment.AttachmentRepository;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,10 +18,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.UUID;
 
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class AttachmentsService {
+
+    private final AttachmentRepository _attachmentRepository;
+
     private AmazonS3 _s3;
 
     @Value("${cloud.aws.credentials.accessKey}")
@@ -44,11 +51,21 @@ public class AttachmentsService {
     }
 
     public String upload(MultipartFile file) throws IOException {
-        String fileName = file.getOriginalFilename();
+        var fileId = UUID.randomUUID().toString();
+        var fileName = fileId + "_" + file.getOriginalFilename();
 
         _s3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
-        return _s3.getUrl(bucket, fileName).toString();
+
+        var fileUrl = _s3.getUrl(bucket, fileName).toString();
+
+        _attachmentRepository.save(Attachment.builder()
+                .id(fileId)
+                .fileName(fileName)
+                .fileUrl(fileUrl)
+                .build());
+
+        return fileId;
     }
 }

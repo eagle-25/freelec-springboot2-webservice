@@ -45,11 +45,11 @@ public class PostsService {
     @Transactional
     public Long save(PostsSaveRequestDTO req) {
 
-        var attachmentUrl = "";
+        var attachmentId = "";
 
         try {
             if(req.getMultipartFile() != null) {
-                attachmentUrl =  _attachmentsService.upload(req.getMultipartFile());
+                attachmentId =  _attachmentsService.upload(req.getMultipartFile());
             }
 
         } catch (IOException e) {
@@ -60,8 +60,8 @@ public class PostsService {
                 .title(req.getTitle())
                 .content(req.getContent())
                 .author(req.getAuthor())
-                .attachmentUrl(attachmentUrl)
-                        .build())
+                .attachmentId(attachmentId)
+                    .build())
                 .getId();
     }
 
@@ -106,8 +106,8 @@ public class PostsService {
                 .content(entity.getContent())
                 .authorEmail(entity.getAuthor())
                 .authorName(user.getName())
-                .attachmentUrl(entity.getAttachmentUrl())
-                .build();
+                .attachmentId(entity.getAttachmentId())
+                    .build();
     }
 
     @Transactional(readOnly=true) // readonly의 값을 true로 주면, 트랜잭션 범위는 유지하되, 조회 기능만 남겨두어 조회 속도가 개선된다.
