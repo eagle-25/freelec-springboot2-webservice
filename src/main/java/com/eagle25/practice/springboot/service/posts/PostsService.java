@@ -53,18 +53,6 @@ public class PostsService {
     @Transactional
     public Long save(PostsSaveRequestDTO req) {
 
-        var attachmentIds = new ArrayList<Long>();
-
-        try {
-            if(req.getMultipartFile() != null) {
-                attachmentIds.add(_attachmentsService
-                        .upload(req.getMultipartFile()));
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         var postId = postsRepository.save(Posts.builder()
                         .title(req.getTitle())
                         .content(req.getContent())
@@ -72,10 +60,22 @@ public class PostsService {
                         .build())
                 .getId();
 
-        _attachmentOwnerRepository.save(AttachmentOwner.builder()
-                .attachmentId(attachmentIds.get(0))
-                .ownerPostId(postId)
-                .build());
+        try {
+            var attachmentIds = new ArrayList<Long>();
+
+            if(req.getMultipartFile() != null) {
+                attachmentIds.add(_attachmentsService
+                        .upload(req.getMultipartFile()));
+
+                _attachmentOwnerRepository.save(AttachmentOwner.builder()
+                        .attachmentId(attachmentIds.get(0))
+                        .ownerPostId(postId)
+                        .build());
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return postId;
     }

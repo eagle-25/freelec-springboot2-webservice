@@ -22,7 +22,8 @@ public class PostAPIController {
     @PostMapping("/api/v1/posts")
     public Long save(@RequestParam("title") String title,
                      @RequestParam("content") String content,
-                     @RequestParam("attachment") MultipartFile file, @LoginUser SessionUser user) {
+                     @RequestParam(value = "attachment", required = false) MultipartFile file,
+                     @LoginUser SessionUser user) {
 
         var data = PostsSaveRequestDTO.builder()
                 .title(title)
