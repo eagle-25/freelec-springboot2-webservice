@@ -2,6 +2,10 @@ package com.eagle25.practice.springboot.service.posts;
 
 
 import com.eagle25.practice.springboot.config.auth.dto.SessionUser;
+import com.eagle25.practice.springboot.domain.attachment.Attachment;
+import com.eagle25.practice.springboot.domain.attachment.AttachmentRepository;
+import com.eagle25.practice.springboot.domain.attachment.owner.AttachmentOwner;
+import com.eagle25.practice.springboot.domain.attachment.owner.AttachmentOwnerRepository;
 import com.eagle25.practice.springboot.domain.posts.Posts;
 import com.eagle25.practice.springboot.domain.posts.PostsRepository;
 import com.eagle25.practice.springboot.domain.users.UserRepository;
@@ -16,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,29 +46,38 @@ lombok의 library인 @RequiredArgsConstructor를 사용하면 클래스 내에 �
 public class PostsService {
     private final PostsRepository postsRepository;
     private final AttachmentsService _attachmentsService;
+    private final AttachmentRepository _attachmentRepository;
+    private final AttachmentOwnerRepository _attachmentOwnerRepository;
     private final UserRepository userRepository;
 
     @Transactional
     public Long save(PostsSaveRequestDTO req) {
 
-        var attachmentId = "";
+        var attachmentIds = new ArrayList<Long>();
 
         try {
             if(req.getMultipartFile() != null) {
-                attachmentId =  _attachmentsService.upload(req.getMultipartFile());
+                attachmentIds.add(_attachmentsService
+                        .upload(req.getMultipartFile()));
             }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return postsRepository.save(Posts.builder()
-                .title(req.getTitle())
-                .content(req.getContent())
-                .author(req.getAuthor())
-                .attachmentId(attachmentId)
-                    .build())
+        var postId = postsRepository.save(Posts.builder()
+                        .title(req.getTitle())
+                        .content(req.getContent())
+                        .author(req.getAuthor())
+                        .build())
                 .getId();
+
+        _attachmentOwnerRepository.save(AttachmentOwner.builder()
+                .attachmentId(attachmentIds.get(0))
+                .ownerPostId(postId)
+                .build());
+
+        return postId;
     }
 
     @Transactional
@@ -100,13 +115,24 @@ public class PostsService {
                 .findByEmail(entity.getAuthor())
                 .get();
 
+        var attachmentId = _attachmentOwnerRepository
+                .findByOwnerPostId(id)
+                .get(0)
+                .getAttachmentId();
+
+        var attachment = _attachmentRepository
+                .findById(attachmentId)
+                .get();
+
+        var attachments = new ArrayList(Arrays.asList(attachment));
+
         return PostsResponseDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .authorEmail(entity.getAuthor())
                 .authorName(user.getName())
-                .attachmentId(entity.getAttachmentId())
+                .attachments(attachments)
                     .build();
     }
 

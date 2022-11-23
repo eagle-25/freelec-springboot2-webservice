@@ -25,15 +25,13 @@ public class Posts extends BaseTimeEntity {
 
     private String author;
 
-    private String attachmentId;
 
     @Builder // 클래스의 빌더 패턴 클래스 생성.
-    public Posts(String title, String content, String author, String attachmentId)
+    public Posts(String title, String content, String author)
     {
         this.title = title;
         this.content = content;
         this.author = author;
-        this.attachmentId = attachmentId;
     }
 
     public void update(String title, String content) {

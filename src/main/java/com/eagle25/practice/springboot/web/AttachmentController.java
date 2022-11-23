@@ -16,7 +16,7 @@ public class AttachmentController {
     private final AttachmentsService attachmentsService;
 
     @GetMapping("/attachments/{id}")
-    public ResponseEntity<byte[]> downloadObject(@PathVariable String id) throws IOException {
+    public ResponseEntity<byte[]> downloadObject(@PathVariable Long id) throws IOException {
         return attachmentsService
                 .getObject(id);
     }

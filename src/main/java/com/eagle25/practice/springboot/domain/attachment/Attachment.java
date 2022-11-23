@@ -13,7 +13,8 @@ import javax.persistence.*;
 @Entity
 public class Attachment extends BaseTimeEntity {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(length =  100, nullable = false)
     private String uniqueFileName;
@@ -22,7 +23,7 @@ public class Attachment extends BaseTimeEntity {
     private String userFileName;
 
     @Builder
-    public Attachment(String id, String uniqueFileName, String userFileName) {
+    public Attachment(Long id, String uniqueFileName, String userFileName) {
         this.id = id;
         this.uniqueFileName = uniqueFileName;;
         this.userFileName = userFileName;;
