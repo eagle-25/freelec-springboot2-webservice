@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 public class Application {
+    static {
+        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+    }
     public static void main(String[] args) {
         // 내장 WAS를 실행. (Web Application Server)
         // 스프링은 내장 WAS 사용을 권장하고 있다.
