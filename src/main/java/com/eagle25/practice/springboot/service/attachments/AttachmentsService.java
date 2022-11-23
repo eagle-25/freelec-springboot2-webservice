@@ -6,18 +6,24 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
 import com.eagle25.practice.springboot.domain.attachment.Attachment;
 import com.eagle25.practice.springboot.domain.attachment.AttachmentRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -52,20 +58,49 @@ public class AttachmentsService {
 
     public String upload(MultipartFile file) throws IOException {
         var fileId = UUID.randomUUID().toString();
-        var fileName = fileId + "_" + file.getOriginalFilename();
+        var uniqueFileName =  fileId + "_" + file.getOriginalFilename();
 
-        _s3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
+        _s3.putObject(new PutObjectRequest(bucket, uniqueFileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
-
-        var fileUrl = _s3.getUrl(bucket, fileName).toString();
-
-        _attachmentRepository.save(Attachment.builder()
+        _attachmentRepository.save(Attachment
+                .builder()
                 .id(fileId)
-                .fileName(fileName)
-                .fileUrl(fileUrl)
+                .uniqueFileName(uniqueFileName)
+                .userFileName(file.getOriginalFilename())
                 .build());
 
         return fileId;
+    }
+
+    public ResponseEntity<byte[]> getObject(String id) throws IOException {
+        var attachment = _attachmentRepository
+                .getOne(id);
+
+        // UUID가 붙은 파일 이름
+        var uniqueFileName = attachment
+                .getUniqueFileName();
+
+        // 사용자가 업로드한 파일의 원래 이름
+        var userFileName = URLEncoder
+                .encode(attachment.getUserFileName(), "UTF-8")
+                .replaceAll("\\+", "%20")
+                .substring(37);
+
+        var s3Object = _s3
+                .getObject(new GetObjectRequest(bucket, uniqueFileName));
+
+        var objectInputStream = s3Object
+                .getObjectContent();
+
+        var bytes = IOUtils
+                .toByteArray(objectInputStream);
+
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        httpHeaders.setContentLength(bytes.length);
+        httpHeaders.setContentDispositionFormData("attachment", userFileName);
+
+        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
     }
 }

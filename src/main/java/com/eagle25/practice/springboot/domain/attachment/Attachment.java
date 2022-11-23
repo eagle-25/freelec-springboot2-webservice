@@ -4,6 +4,7 @@ import com.eagle25.practice.springboot.domain.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 
@@ -15,15 +16,15 @@ public class Attachment extends BaseTimeEntity {
     private String id;
 
     @Column(length =  100, nullable = false)
-    private String fileName;
+    private String uniqueFileName;
 
-    @Column(length =  500, nullable = false)
-    private String fileUrl;
+    @Column(length =  100, nullable = false)
+    private String userFileName;
 
     @Builder
-    public Attachment(String id, String fileName, String fileUrl) {
+    public Attachment(String id, String uniqueFileName, String userFileName) {
         this.id = id;
-        this.fileName = fileName;
-        this.fileUrl = fileUrl;
+        this.uniqueFileName = uniqueFileName;;
+        this.userFileName = userFileName;;
     }
 }
