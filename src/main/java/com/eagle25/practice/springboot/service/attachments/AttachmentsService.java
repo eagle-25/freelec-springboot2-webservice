@@ -81,8 +81,7 @@ public class AttachmentsService {
         // 사용자가 업로드한 파일의 원래 이름
         var userFileName = URLEncoder
                 .encode(attachment.getUserFileName(), "UTF-8")
-                .replaceAll("\\+", "%20")
-                .substring(37);
+                .replaceAll("\\+", "%20");
 
         var s3Object = _s3
                 .getObject(new GetObjectRequest(bucket, uniqueFileName));
