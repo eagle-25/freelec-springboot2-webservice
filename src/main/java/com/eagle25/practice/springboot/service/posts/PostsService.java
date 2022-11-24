@@ -4,8 +4,6 @@ package com.eagle25.practice.springboot.service.posts;
 import com.eagle25.practice.springboot.config.auth.dto.SessionUser;
 import com.eagle25.practice.springboot.domain.attachment.Attachment;
 import com.eagle25.practice.springboot.domain.attachment.AttachmentRepository;
-import com.eagle25.practice.springboot.domain.attachment.owner.AttachmentOwner;
-import com.eagle25.practice.springboot.domain.attachment.owner.AttachmentOwnerRepository;
 import com.eagle25.practice.springboot.domain.posts.Posts;
 import com.eagle25.practice.springboot.domain.posts.PostsRepository;
 import com.eagle25.practice.springboot.domain.users.UserRepository;
@@ -47,7 +45,6 @@ public class PostsService {
     private final PostsRepository postsRepository;
     private final AttachmentsService _attachmentsService;
     private final AttachmentRepository _attachmentRepository;
-    private final AttachmentOwnerRepository _attachmentOwnerRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -65,12 +62,7 @@ public class PostsService {
 
             if(req.getMultipartFile() != null) {
                 attachmentIds.add(_attachmentsService
-                        .upload(req.getMultipartFile()));
-
-                _attachmentOwnerRepository.save(AttachmentOwner.builder()
-                        .attachmentId(attachmentIds.get(0))
-                        .ownerPostId(postId)
-                        .build());
+                        .upload(postId, req.getMultipartFile()));
             }
         }
         catch (IOException e) {
@@ -108,29 +100,21 @@ public class PostsService {
      */
 
     public PostsResponseDTO findById (Long id) {
-        var entity = postsRepository.findById(id)
+        var post = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
         var user = userRepository
-                .findByEmail(entity.getAuthor())
+                .findByEmail(post.getAuthor())
                 .get();
 
-        var attachmentId = _attachmentOwnerRepository
-                .findByOwnerPostId(id)
-                .get(0)
-                .getAttachmentId();
-
-        var attachment = _attachmentRepository
-                .findById(attachmentId)
-                .get();
-
-        var attachments = new ArrayList(Arrays.asList(attachment));
+        var attachments = _attachmentRepository
+                .findByOwnerPostId(id);
 
         return PostsResponseDTO.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .authorEmail(entity.getAuthor())
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .authorEmail(post.getAuthor())
                 .authorName(user.getName())
                 .attachments(attachments)
                     .build();

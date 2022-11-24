@@ -56,17 +56,18 @@ public class AttachmentsService {
                 .build();
     }
 
-    public Long upload(MultipartFile file) throws IOException {
+    public Long upload(Long ownerPostId, MultipartFile file) throws IOException {
         var uniqueFileName =  UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         _s3.putObject(new PutObjectRequest(bucket, uniqueFileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
         return _attachmentRepository.save(Attachment
-                .builder()
-                .uniqueFileName(uniqueFileName)
-                .userFileName(file.getOriginalFilename())
-                .build())
+                        .builder()
+                        .uniqueFileName(uniqueFileName)
+                        .userFileName(file.getOriginalFilename())
+                        .ownerPostId(ownerPostId)
+                        .build())
                 .getId();
     }
 
