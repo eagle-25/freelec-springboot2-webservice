@@ -6,6 +6,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
@@ -56,6 +58,7 @@ public class AttachmentsService {
                 .build();
     }
 
+    @Transactional
     public Long upload(Long ownerPostId, MultipartFile file) throws IOException {
         var uniqueFileName =  UUID.randomUUID() + "_" + file.getOriginalFilename();
 
@@ -99,5 +102,17 @@ public class AttachmentsService {
         httpHeaders.setContentDispositionFormData("attachment", userFileName);
 
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    }
+
+    @Transactional
+    public Long deleteObject(Long id) throws IOException {
+        var attachment = _attachmentRepository
+                .getOne(id);
+
+        _s3.deleteObject(new DeleteObjectRequest(bucket, attachment.getUniqueFileName()));
+
+        _attachmentRepository.delete(attachment);
+
+        return id;
     }
 }

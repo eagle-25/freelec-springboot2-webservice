@@ -10,6 +10,9 @@ var main = {
         $('#btn-delete').on('click', function () {
             _this.delete();
         });
+        $('#btn-attachment-delete').on('click', function (e) {
+            _this.deleteAttachment(e.target.value);
+        })
     },
     save : function () {
         var form = new FormData();
@@ -63,6 +66,22 @@ var main = {
         }).done(function() {
             alert('글이 삭제되었습니다.');
             window.location.href='/';
+        }).fail(function (error){
+            alert(JSON.stringify(error.responseJSON.message));
+        });
+    },
+    deleteAttachment: function (attachmentId) {
+
+        if(!window.confirm("파일을 정말로 삭제하시겠습니까?")) return;
+
+        $.ajax({
+            type: 'DELETE',
+            url: '/attachment/' + attachmentId,
+            dataType: 'json',
+            contentType: 'application/json; charset:utf-8'
+        }).done(function() {
+            $(`#attachment-${attachmentId}`).remove();
+            alert('첨부파일이 삭제되었습니다.');
         }).fail(function (error){
             alert(JSON.stringify(error.responseJSON.message));
         });
