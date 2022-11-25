@@ -50,7 +50,18 @@ var main = {
         var form = new FormData();
         form.append("title", $('#title').val())
         form.append("content", $('#content').val())
-        form.append("removeAttachments", _removeAttachmentList);
+        form.append("removedAttachments", _removeAttachmentList);
+
+        for(let i = 0; i < $('#attachments')[0].children.length; i++)
+        {
+            var id = $('#attachments')[0].children[i].id.split("-")[2];
+            var fileTagId = '#attachment-' + id;
+
+
+            if($(fileTagId)[0] == null || $(fileTagId)[0].type != "file") continue;
+
+            form.append("addedAttachments", $(fileTagId)[0].files[0]);
+        }
 
         var id = $('#id').val();
 

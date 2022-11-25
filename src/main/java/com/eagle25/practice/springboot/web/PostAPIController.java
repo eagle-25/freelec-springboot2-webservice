@@ -41,13 +41,15 @@ public class PostAPIController {
                        @LoginUser SessionUser user,
                        @RequestParam("title") String title,
                        @RequestParam("content") String content,
-                       @RequestParam(value = "removeAttachments", required = false) List<Long> removedAttachmentIds) {
+                       @RequestParam(value = "removedAttachments", required = false) List<Long> removedAttachmentIds,
+                       @RequestParam(value = "addedAttachments", required = false) List<MultipartFile> addedAttachments) {
 
         var requestDTO = PostsUpdateRequestDTO.builder()
                 .title(title)
                 .content(content)
                 .sessionUser(user)
                 .removedAttachmentIds(removedAttachmentIds)
+                .addedAttachments(addedAttachments)
                 .build();
 
         return postsService

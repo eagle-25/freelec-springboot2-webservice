@@ -81,17 +81,24 @@ public class PostsService {
             throw new IllegalArgumentException("수정 실패: 현재 로그인 한 사용자와 글을 작성한 사용자의 계정이 다릅니다.");
         }
 
+        posts.update(requestDTO.getTitle(), requestDTO.getContent());
+
         try {
+            // delete files
             for(var fileId: requestDTO.getRemovedAttachmentIds()){
                 _attachmentsService
                         .deleteObject(fileId);
             }
+
+            // add files
+            for(var file: requestDTO.getAddedAttachments()) {
+                _attachmentsService
+                        .upload(id, file);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        posts.update(requestDTO.getTitle(), requestDTO.getContent());
-
+        
         return id;
     }
     /* Update 기능에 쿼리를 날리는 부분이 없는 이유
