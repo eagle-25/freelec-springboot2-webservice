@@ -11,6 +11,7 @@ import lombok.var;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -22,14 +23,14 @@ public class PostAPIController {
     @PostMapping("/api/v1/posts")
     public Long save(@RequestParam("title") String title,
                      @RequestParam("content") String content,
-                     @RequestParam(value = "attachment", required = false) MultipartFile file,
+                     @RequestParam(value = "attachments", required = false) List<MultipartFile> files,
                      @LoginUser SessionUser user) {
 
         var data = PostsSaveRequestDTO.builder()
                 .title(title)
                 .author(user.getEmail())
                 .content(content)
-                .multipartFile(file)
+                .multipartFiles(files)
                 .build();
 
         return postsService.save(data);

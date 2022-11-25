@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.Multipart;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -14,14 +15,14 @@ public class PostsSaveRequestDTO {
     private String title;
     private String content;
     private String author;
-    private MultipartFile multipartFile;
+    private List<MultipartFile> multipartFiles;
 
     @Builder
-    public PostsSaveRequestDTO(String title, String content, String author, MultipartFile multipartFile) {
+    public PostsSaveRequestDTO(String title, String content, String author, List<MultipartFile> multipartFiles) {
         this.title = title;
         this.content = content;
         this.author = author;
-        this.multipartFile = multipartFile;
+        this.multipartFiles = multipartFiles;
     }
 
     public Posts toEntity() {

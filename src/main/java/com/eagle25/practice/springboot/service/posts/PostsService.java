@@ -57,12 +57,12 @@ public class PostsService {
                         .build())
                 .getId();
 
-        try {
-            var attachmentIds = new ArrayList<Long>();
+        if(req.getMultipartFiles().isEmpty()) return postId;
 
-            if(req.getMultipartFile() != null) {
-                attachmentIds.add(_attachmentsService
-                        .upload(postId, req.getMultipartFile()));
+        try {
+            for (var file: req.getMultipartFiles()) {
+
+                _attachmentsService.upload(postId, file);
             }
         }
         catch (IOException e) {
