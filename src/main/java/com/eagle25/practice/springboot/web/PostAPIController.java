@@ -37,15 +37,21 @@ public class PostAPIController {
     }
 
     @PutMapping("/api/v1/posts/{id}")
-    public Long update(@PathVariable Long id, @RequestBody Map<String, Object> req, @LoginUser SessionUser user) {
+    public Long update(@PathVariable Long id,
+                       @LoginUser SessionUser user,
+                       @RequestParam("title") String title,
+                       @RequestParam("content") String content,
+                       @RequestParam(value = "removeAttachments", required = false) List<Long> removedAttachmentIds) {
 
         var requestDTO = PostsUpdateRequestDTO.builder()
-                .title(req.get("title").toString())
-                .content(req.get("content").toString())
+                .title(title)
+                .content(content)
                 .sessionUser(user)
+                .removedAttachmentIds(removedAttachmentIds)
                 .build();
 
-        return postsService.update(id, requestDTO);
+        return postsService
+                .update(id, requestDTO);
     }
 
     @GetMapping("/api/v1/posts/{id}")

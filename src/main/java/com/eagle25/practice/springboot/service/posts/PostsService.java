@@ -61,7 +61,6 @@ public class PostsService {
 
         try {
             for (var file: req.getMultipartFiles()) {
-
                 _attachmentsService.upload(postId, file);
             }
         }
@@ -80,6 +79,15 @@ public class PostsService {
 
         if(!posts.getAuthor().equals(requestDTO.getSessionUser().getEmail())) {
             throw new IllegalArgumentException("수정 실패: 현재 로그인 한 사용자와 글을 작성한 사용자의 계정이 다릅니다.");
+        }
+
+        try {
+            for(var fileId: requestDTO.getRemovedAttachmentIds()){
+                _attachmentsService
+                        .deleteObject(fileId);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         posts.update(requestDTO.getTitle(), requestDTO.getContent());

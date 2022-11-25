@@ -25,12 +25,13 @@
                 <label for="content">첨부파일</label>
                 <ul id="attachments">
                     {{#post.attachments}}
-                        <li id="attachment-{{id}}">
+                        <li id="attachment-li-{{id}}">
                             <a href="/attachment/{{id}}">{{userFileName}}</a>
-                            <button type="button" class="btn btn-danger" id="btn-attachment-delete" value="{{id}}">파일 삭제</button>
+                            <button type="button" class="btn btn-danger" id="btn-attachment-delete" onclick="main.deleteAttachment({{id}})" value="{{id}}">파일 삭제</button>
                         </li>
                     {{/post.attachments}}
                 </ul>
+                <input type="file" class="form-control" name="additionalAttachment" id="additionalAttachment" placeholder="첨부파일" formenctype="multipart/form-data">
             </div>
         </form>
         <a href="/" role="button" class="btn btn-secondary">취소</a>

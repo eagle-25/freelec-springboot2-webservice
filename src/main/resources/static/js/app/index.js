@@ -42,7 +42,7 @@ var main = {
         }).done(function (){
             alert('글이 등록되었습니다.');
             window.location.href = '/';
-        }).fail(function (){
+        }).fail(function (error){
             alert(JSON.stringify(error.responseJSON.message));
         });
     },
@@ -50,7 +50,7 @@ var main = {
         var form = new FormData();
         form.append("title", $('#title').val())
         form.append("content", $('#content').val())
-        form.append("additionalAttachment", $('#additionalAttachment')[0].files[0])
+        form.append("removeAttachments", _removeAttachmentList);
 
         var id = $('#id').val();
 
@@ -85,6 +85,7 @@ var main = {
     },
     deleteAttachment: function (attachmentId) {
         if(!window.confirm("파일을 정말로 삭제하시겠습니까?")) return;
+        _removeAttachmentList.push(attachmentId);
         $(`#attachment-li-${attachmentId}`).remove();
     },
     addAttachments: function () {
@@ -97,5 +98,7 @@ var main = {
                 "</li>");
     }
 };
+
+var _removeAttachmentList = new Array();
 
 main.init();
