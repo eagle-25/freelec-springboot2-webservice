@@ -98,7 +98,7 @@ public class PostsService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        
+
         return id;
     }
     /* Update 기능에 쿼리를 날리는 부분이 없는 이유
@@ -156,6 +156,17 @@ public class PostsService {
         if(!posts.getAuthor().equals(user.getEmail()))
         {
             throw new IllegalArgumentException("삭제 실패: 현재 로그인 한 사용자와 글을 작성한 사용자의 계정이 다릅니다.");
+        }
+
+        var attachments = _attachmentRepository.findByOwnerPostId(id);
+
+        for(var file: attachments) {
+            try {
+                _attachmentsService
+                        .deleteObject(file.getId());
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
         }
 
         postsRepository.delete(posts);
