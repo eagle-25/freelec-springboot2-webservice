@@ -15,24 +15,13 @@ public class PostsSaveRequestDTO {
     private String title;
     private String content;
     private String author;
-    private List<MultipartFile> multipartFiles;
 
     @Builder
-    public PostsSaveRequestDTO(String title, String content, String author, List<MultipartFile> multipartFiles) {
+    public PostsSaveRequestDTO(String title, String content, String author) {
         this.title = title;
         this.content = content;
         this.author = author;
-        this.multipartFiles = multipartFiles;
     }
-
-    public Posts toEntity() {
-        return Posts.builder()
-                .title(title)
-                .content(content)
-                .author(author)
-                .build();
-    }
-
     /*
     DTO를 사용하는 이유.
 

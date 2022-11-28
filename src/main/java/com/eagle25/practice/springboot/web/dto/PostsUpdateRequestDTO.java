@@ -15,16 +15,12 @@ public class PostsUpdateRequestDTO {
     private String title;
     private String content;
     private SessionUser sessionUser;
-    private List<Long> removedAttachmentIds;
-    private List<MultipartFile> addedAttachments;
 
     @Builder
-    public PostsUpdateRequestDTO(String title, String content, SessionUser sessionUser, List<Long> removedAttachmentIds, List<MultipartFile> addedAttachments)
+    public PostsUpdateRequestDTO(String title, String content, SessionUser sessionUser)
     {
         this.title = title;
         this.content = content;
         this.sessionUser = sessionUser;
-        this.removedAttachmentIds = removedAttachmentIds;
-        this.addedAttachments = addedAttachments;
     }
 }

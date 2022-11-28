@@ -16,10 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,30 +39,17 @@ lombok의 library인 @RequiredArgsConstructor를 사용하면 클래스 내에 �
 @Service
 public class PostsService {
     private final PostsRepository postsRepository;
-    private final AttachmentsService _attachmentsService;
-    private final AttachmentRepository _attachmentRepository;
     private final UserRepository userRepository;
+    private final AttachmentRepository attachmentRepository;
 
     @Transactional
     public Long save(PostsSaveRequestDTO req) {
-
         var postId = postsRepository.save(Posts.builder()
                         .title(req.getTitle())
                         .content(req.getContent())
                         .author(req.getAuthor())
                         .build())
                 .getId();
-
-        if(req.getMultipartFiles().isEmpty()) return postId;
-
-        try {
-            for (var file: req.getMultipartFiles()) {
-                _attachmentsService.upload(postId, file);
-            }
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         return postId;
     }
@@ -82,22 +65,6 @@ public class PostsService {
         }
 
         posts.update(requestDTO.getTitle(), requestDTO.getContent());
-
-        try {
-            // delete files
-            for(var fileId: requestDTO.getRemovedAttachmentIds()){
-                _attachmentsService
-                        .deleteObject(fileId);
-            }
-
-            // add files
-            for(var file: requestDTO.getAddedAttachments()) {
-                _attachmentsService
-                        .upload(id, file);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         return id;
     }
@@ -122,7 +89,7 @@ public class PostsService {
                 .findByEmail(post.getAuthor())
                 .get();
 
-        var attachments = _attachmentRepository
+        var attachments = attachmentRepository
                 .findByOwnerPostId(id);
 
         return PostsResponseDTO.builder()
@@ -156,17 +123,6 @@ public class PostsService {
         if(!posts.getAuthor().equals(user.getEmail()))
         {
             throw new IllegalArgumentException("삭제 실패: 현재 로그인 한 사용자와 글을 작성한 사용자의 계정이 다릅니다.");
-        }
-
-        var attachments = _attachmentRepository.findByOwnerPostId(id);
-
-        for(var file: attachments) {
-            try {
-                _attachmentsService
-                        .deleteObject(file.getId());
-            }catch (Exception e){
-                throw new RuntimeException(e);
-            }
         }
 
         postsRepository.delete(posts);

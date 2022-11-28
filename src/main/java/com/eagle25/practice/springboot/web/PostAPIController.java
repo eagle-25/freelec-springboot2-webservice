@@ -2,6 +2,7 @@ package com.eagle25.practice.springboot.web;
 
 import com.eagle25.practice.springboot.config.auth.LoginUser;
 import com.eagle25.practice.springboot.config.auth.dto.SessionUser;
+import com.eagle25.practice.springboot.service.attachments.AttachmentsService;
 import com.eagle25.practice.springboot.service.posts.PostsService;
 import com.eagle25.practice.springboot.web.dto.PostsResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsSaveRequestDTO;
@@ -11,6 +12,7 @@ import lombok.var;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ import java.util.Map;
 public class PostAPIController {
 
     private final PostsService postsService;
+    private final AttachmentsService _attachmentsService;
 
     @PostMapping("/api/v1/posts")
     public Long save(@RequestParam("title") String title,
@@ -30,10 +33,22 @@ public class PostAPIController {
                 .title(title)
                 .author(user.getEmail())
                 .content(content)
-                .multipartFiles(files)
                 .build();
 
-        return postsService.save(data);
+        var postId = postsService.save(data);
+
+        // s3 section
+        if(files.isEmpty()) return postId;
+
+        try {
+            _attachmentsService
+                    .uploadAll(postId, files);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return postId;
     }
 
     @PutMapping("/api/v1/posts/{id}")
@@ -48,9 +63,17 @@ public class PostAPIController {
                 .title(title)
                 .content(content)
                 .sessionUser(user)
-                .removedAttachmentIds(removedAttachmentIds)
-                .addedAttachments(addedAttachments)
                 .build();
+
+        _attachmentsService
+                .deleteObjectsById(removedAttachmentIds);
+
+        try {
+            _attachmentsService
+                    .uploadAll(id, addedAttachments);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return postsService
                 .update(id, requestDTO);
@@ -65,7 +88,12 @@ public class PostAPIController {
     @DeleteMapping("/api/v1/posts/{id}")
     public Long delete(@PathVariable Long id, @LoginUser SessionUser user)
     {
-        postsService.delete(id, user);
+        _attachmentsService
+                .deleteObjectsByPostId(id);
+
+        postsService
+                .delete(id, user);
+
         return id;
     }
 }

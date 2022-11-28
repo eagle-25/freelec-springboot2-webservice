@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -37,32 +39,43 @@ public class AttachmentsService {
     private AmazonS3 _s3;
 
     @Value("${cloud.aws.credentials.accessKey}")
-    private String accessKey;
+    private String _accessKey;
 
     @Value("${cloud.aws.credentials.secretKey}")
-    private String secretKey;
+    private String _secretKey;
 
     @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private String _bucketName;
 
     @Value("${cloud.aws.region.static}")
-    private String region;
+    private String _region;
 
     @PostConstruct
     public void setS3Client() {
-        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
+        AWSCredentials credentials = new BasicAWSCredentials(this._accessKey, this._secretKey);
 
         _s3 = AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(this.region)
+                .withRegion(_region)
                 .build();
     }
 
     @Transactional
-    public Long upload(Long ownerPostId, MultipartFile file) throws IOException {
+    public List<Long> uploadAll(Long ownerPostId, List<MultipartFile> files) throws IOException {
+        var results = new ArrayList<Long>();
+
+        for(var file : files) {
+            results.add(upload(ownerPostId, file));
+        }
+
+        return results;
+    }
+
+    @Transactional
+    public Long upload(Long ownerPostId, MultipartFile file) throws IOException{
         var uniqueFileName =  UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-        _s3.putObject(new PutObjectRequest(bucket, uniqueFileName, file.getInputStream(), null)
+        _s3.putObject(new PutObjectRequest(_bucketName, uniqueFileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
         return _attachmentRepository.save(Attachment
@@ -88,7 +101,7 @@ public class AttachmentsService {
                 .replaceAll("\\+", "%20");
 
         var s3Object = _s3
-                .getObject(new GetObjectRequest(bucket, uniqueFileName));
+                .getObject(new GetObjectRequest(_bucketName, uniqueFileName));
 
         var objectInputStream = s3Object
                 .getObjectContent();
@@ -105,14 +118,45 @@ public class AttachmentsService {
     }
 
     @Transactional
-    public Long deleteObject(Long id) throws IOException {
+    public Long deleteObject(Long id) {
         var attachment = _attachmentRepository
                 .getOne(id);
 
-        _s3.deleteObject(new DeleteObjectRequest(bucket, attachment.getUniqueFileName()));
+        _s3.deleteObject(new DeleteObjectRequest(_bucketName, attachment.getUniqueFileName()));
 
         _attachmentRepository.delete(attachment);
 
         return id;
+    }
+
+    @Transactional
+    public int deleteObjectsByPostId(Long postId) {
+        var targetAttachments = _attachmentRepository
+                .findByOwnerPostId(postId);
+
+        return deleteObjects(targetAttachments);
+    }
+
+    @Transactional
+    public int deleteObjectsById(Iterable<Long> attachmentIds) {
+        var targetAttachments = _attachmentRepository
+                .findAllById(attachmentIds);
+
+        return deleteObjects(targetAttachments);
+    }
+
+    @Transactional
+    public int deleteObjects(Iterable<Attachment> attachments) {
+        var count = 0;
+
+        for(var file: attachments) {
+            deleteObject(file.getId());
+            count += 1;
+        }
+
+        _attachmentRepository
+                .deleteAll(attachments);
+
+        return count;
     }
 }
