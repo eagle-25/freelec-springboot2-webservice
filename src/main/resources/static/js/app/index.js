@@ -103,10 +103,14 @@ var main = {
         var id = new Date().getTime();
 
         $(`#attachments`)
-            .append("<li id=\"attachment-li-" + id + "\" >" +
-                "<input type=\"file\" class=\"form-control\" id=\"attachment-" + id + "\" placeholder=\"파일 선택\" formEncType=\"multipart/form-data\">" +
-                "<button type=\"button\" class=\"btn btn-danger\" onclick=\"main.deleteAttachment(" + id + ")\" id=\"btn-attachment-delete\" value=\"" + id + "\">삭제</button>" +
-                "</li>");
+            .append(`<li id="attachment-li-${id}\" class=\"row\">
+                        <div class=\"col-md-9\">
+                            <input type=\"file\" id=\"attachment-${id}\" class=\"form-control\"  placeholder=\"파일 선택\" formenctype=\"multipart/form-data\">
+                        </div>
+                        <div class=\"row-md-3\">
+                            <button type=\"button\" id=\"btn-attachment-delete\" value=\"${id}\" onclick="main.deleteAttachment(${id})" class=\"btn btn-danger\">삭제</button>
+                        </div>
+                    </li>`);
     }
 };
 

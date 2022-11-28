@@ -1,6 +1,6 @@
 {{>layout/header}}
     <div class="col-md-12">
-        <div class="col-md=6">
+        <div class="col-md-6">
             <form>
                 <div class="form-group">
                     <h2>게시글 등록</h2>
@@ -16,13 +16,17 @@
                 <div class="form-group">
                     <label for="content">첨부파일</label>
                     <ul id="attachments">
-                        <li id="attachment-li-0">
-                            <input type="file" id="attachment-0" class="form-control"  placeholder="파일 선택" formenctype="multipart/form-data">
-                            <button type="button" id="btn-attachment-delete" value="0"  class="btn btn-danger">삭제</button>
+                        <li id="attachment-li-0" class="row">
+                            <div class="col-md-9">
+                                <input type="file" id="attachment-0" class="form-control"  placeholder="파일 선택" formenctype="multipart/form-data">
+                            </div>
+                            <div class="row-md-3">
+                                <button type="button" id="btn-attachment-delete" value="0"  class="btn btn-danger">삭제</button>
+                            </div>
                         </li>
                     </ul>
+                    <button type="button" class="btn btn-secondary" id="btn-add-attachment">파일 추가</button>
                 </div>
-                <button type="button" class="btn btn-secondary" id="btn-add-attachment">파일 추가</button>
             </form>
             <a href="/" role="button" class="btn btn-secondary">취소</a>
             <button type="button" class="btn btn-primary" id="btn-save">등록</button>

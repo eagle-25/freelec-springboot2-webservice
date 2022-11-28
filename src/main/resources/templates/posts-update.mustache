@@ -25,9 +25,13 @@
                 <label for="content">첨부파일</label>
                 <ul id="attachments">
                     {{#post.attachments}}
-                        <li id="attachment-li-{{id}}">
-                            <a href="/attachment/{{id}}">{{userFileName}}</a>
-                            <button type="button" class="btn btn-danger" id="btn-attachment-delete" onclick="main.deleteAttachment({{id}})" value="{{id}}">파일 삭제</button>
+                        <li id="attachment-li-{{id}}" class="row">
+                            <div class="col-md-9">
+                                <a href="/attachment/{{id}}">{{userFileName}}</a>
+                            </div>
+                            <div class="row-md-3">
+                                <button type="button" class="btn btn-danger" id="btn-attachment-delete" onclick="main.deleteAttachment({{id}})" value="{{id}}">파일 삭제</button>
+                            </div>
                         </li>
                     {{/post.attachments}}
                 </ul>
