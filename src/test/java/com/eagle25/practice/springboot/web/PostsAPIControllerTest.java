@@ -31,7 +31,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.Session;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -50,23 +52,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 따라서 JPA까지 한번에 테스트 할 때는 @SpringBootTest와 TestRestTemplate 어노테이션을 사용하는게 적합하다.
  */
 public class PostsAPIControllerTest {
-
+    static {
+        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+    }
     @LocalServerPort
     private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
     @Autowired
     private PostsRepository postsRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
     @Autowired
     private WebApplicationContext context;
 
     private MockMvc mvc;
+
+    private SessionUser user;
 
     @Before // 매번 테스트가 시작되기 전에 MockMVC 인스턴스를 생성한다.
     public void setup() {
@@ -74,6 +72,13 @@ public class PostsAPIControllerTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+
+        user = new SessionUser(User.builder()
+                .name("testUser")
+                .email("tmdwns02556@gmail.com")
+                .picture("")
+                .role(Role.USER)
+                .build());
     }
 
     @After
@@ -93,30 +98,19 @@ public class PostsAPIControllerTest {
         //given
         String title = "title";
         String content = "content";
-        String authorEmail = "abc@example.com";
-
-        PostsSaveRequestDTO requestDTO = PostsSaveRequestDTO.builder()
-                .title(title)
-                .content(content)
-                .author(authorEmail)
-                .build();
-
 
         var httpSession = new MockHttpSession();
-        httpSession.setAttribute("user", new SessionUser(User.builder()
-                .name("testUser")
-                .email(authorEmail)
-                .picture("")
-                .role(Role.USER)
-                .build()));
+        httpSession.setAttribute("user", user);
 
         String url = "http://localhost:" + port + "/api/v1/posts";
 
         //when
         mvc.perform((post(url) // 생성된 MockMVC 인스턴스를 생성한다.
                 .session(httpSession)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(new ObjectMapper().writeValueAsString(requestDTO))))
+                .param("title", title)
+                .param("content", content)
+                .param("attachments", "")
+                .contentType(MediaType.TEXT_PLAIN)))
                     .andExpect(status().isOk());
 
         //then
@@ -126,46 +120,37 @@ public class PostsAPIControllerTest {
         assertThat(all.get(0).getContent())
                 .isEqualTo(content);
         assertThat(all.get(0).getAuthor())
-                .isEqualTo(authorEmail);
+                .isEqualTo(user.getEmail());
     }
 
     @Test
     @WithMockUser(roles="GUEST")
     public void Posts_수정된다() throws Exception {
         //given
-        String authorEmail = "abc@example.com";
+        var authorEmail = user.getEmail();
 
-        Posts savedPosts = postsRepository.save(Posts.builder()
+        var savedPostId = postsRepository.save(Posts.builder()
                 .title("Title")
                 .content("Content")
                 .author(authorEmail)
-                .build());
+                .build())
+                .getId();
 
         var httpSession = new MockHttpSession();
-        httpSession.setAttribute("user", new SessionUser(User.builder()
-                .name("testUser")
-                .email(authorEmail)
-                .picture("")
-                .role(Role.USER)
-                .build()));
+        httpSession.setAttribute("user", user);
 
-        Long updateId = savedPosts.getId();
-
-        String expectedTitle = "title2";
-        String expectedContent = "content2";
-
-        PostsUpdateRequestDTO requestDTO = PostsUpdateRequestDTO.builder()
-                .title(expectedTitle)
-                .content(expectedContent)
-                .build();
-
-        String url = "http://localhost:" + port + "/api/v1/posts/" + updateId;
+        var expectedTitle = "title2";
+        var expectedContent = "content2";
+        var url = "http://localhost:" + port + "/api/v1/posts/" + savedPostId;
 
         //when
         mvc.perform(put(url)
                 .session(httpSession)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(new ObjectMapper().writeValueAsString(requestDTO)))
+                .contentType(MediaType.TEXT_PLAIN)
+                .param("title", expectedTitle)
+                .param("content", expectedContent)
+                .param("removedAttachments", "")
+                .param("addedAttachments", ""))
                         .andExpect(status().isOk());
 
         //then

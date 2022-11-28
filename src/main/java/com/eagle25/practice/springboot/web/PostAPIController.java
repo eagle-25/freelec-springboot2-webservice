@@ -38,7 +38,7 @@ public class PostAPIController {
         var postId = postsService.save(data);
 
         // s3 section
-        if(files.isEmpty()) return postId;
+        if(files == null) return postId;
 
         try {
             _attachmentsService
@@ -68,9 +68,13 @@ public class PostAPIController {
         _attachmentsService
                 .deleteObjectsById(removedAttachmentIds);
 
+
+
         try {
-            _attachmentsService
-                    .uploadAll(id, addedAttachments);
+            if(addedAttachments != null) {
+                _attachmentsService
+                        .uploadAll(id, addedAttachments);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
