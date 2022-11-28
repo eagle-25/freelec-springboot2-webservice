@@ -4,6 +4,10 @@ import com.eagle25.practice.springboot.domain.posts.Posts;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.mail.Multipart;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -18,15 +22,6 @@ public class PostsSaveRequestDTO {
         this.content = content;
         this.author = author;
     }
-
-    public Posts toEntity() {
-        return Posts.builder()
-                .title(title)
-                .content(content)
-                .author(author)
-                .build();
-    }
-
     /*
     DTO를 사용하는 이유.
 

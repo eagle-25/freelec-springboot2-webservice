@@ -5,6 +5,9 @@ import com.eagle25.practice.springboot.domain.users.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor

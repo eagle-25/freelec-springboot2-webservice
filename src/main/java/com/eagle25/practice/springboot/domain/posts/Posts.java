@@ -25,6 +25,7 @@ public class Posts extends BaseTimeEntity {
 
     private String author;
 
+
     @Builder // 클래스의 빌더 패턴 클래스 생성.
     public Posts(String title, String content, String author)
     {

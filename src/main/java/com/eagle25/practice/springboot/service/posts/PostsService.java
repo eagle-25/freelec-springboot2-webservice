@@ -2,9 +2,12 @@ package com.eagle25.practice.springboot.service.posts;
 
 
 import com.eagle25.practice.springboot.config.auth.dto.SessionUser;
+import com.eagle25.practice.springboot.domain.attachment.Attachment;
+import com.eagle25.practice.springboot.domain.attachment.AttachmentRepository;
 import com.eagle25.practice.springboot.domain.posts.Posts;
 import com.eagle25.practice.springboot.domain.posts.PostsRepository;
 import com.eagle25.practice.springboot.domain.users.UserRepository;
+import com.eagle25.practice.springboot.service.attachments.AttachmentsService;
 import com.eagle25.practice.springboot.web.dto.PostsListResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsResponseDTO;
 import com.eagle25.practice.springboot.web.dto.PostsSaveRequestDTO;
@@ -13,11 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 /*
 @RequiredArgsConstructor를 사용하는 이유
 
@@ -34,16 +35,23 @@ import java.util.stream.Collectors;
 lombok의 library인 @RequiredArgsConstructor를 사용하면 클래스 내에 선언된 모든 필드들을 매개변수로 취하는 생성자를 자동으로 만들어 준다.
 필드 변경에 따른 생성자를 직접 수정할 필요가 없어 필드 변경이 편해진다.
  */
+@RequiredArgsConstructor
 @Service
 public class PostsService {
     private final PostsRepository postsRepository;
-
     private final UserRepository userRepository;
+    private final AttachmentRepository attachmentRepository;
 
     @Transactional
-    public Long save(PostsSaveRequestDTO requestDTO) {
-        return postsRepository.save(requestDTO.toEntity())
+    public Long save(PostsSaveRequestDTO req) {
+        var postId = postsRepository.save(Posts.builder()
+                        .title(req.getTitle())
+                        .content(req.getContent())
+                        .author(req.getAuthor())
+                        .build())
                 .getId();
+
+        return postId;
     }
 
     @Transactional
@@ -74,20 +82,24 @@ public class PostsService {
      */
 
     public PostsResponseDTO findById (Long id) {
-        var entity = postsRepository.findById(id)
+        var post = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
         var user = userRepository
-                .findByEmail(entity.getAuthor())
+                .findByEmail(post.getAuthor())
                 .get();
 
+        var attachments = attachmentRepository
+                .findByOwnerPostId(id);
+
         return PostsResponseDTO.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .authorEmail(entity.getAuthor())
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .authorEmail(post.getAuthor())
                 .authorName(user.getName())
-                .build();
+                .attachments(attachments)
+                    .build();
     }
 
     @Transactional(readOnly=true) // readonly의 값을 true로 주면, 트랜잭션 범위는 유지하되, 조회 기능만 남겨두어 조회 속도가 개선된다.
