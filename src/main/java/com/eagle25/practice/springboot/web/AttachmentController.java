@@ -22,6 +22,13 @@ public class AttachmentController {
                 .getObject(id);
     }
 
+    @PostMapping("/api/v1/attachment")
+    public Long putObject(@RequestParam("ownerPostId") Long postId,
+                          @RequestParam("attachment") MultipartFile file) throws IOException {
+        return  attachmentsService
+                .upload(postId, file);
+    }
+
     @DeleteMapping("/api/v1/attachment/{id}")
     public Long deleteObject(@PathVariable Long id) throws IOException {
         return attachmentsService

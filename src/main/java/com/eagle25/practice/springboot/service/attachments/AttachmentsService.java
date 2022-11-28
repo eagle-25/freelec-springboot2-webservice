@@ -159,4 +159,8 @@ public class AttachmentsService {
 
         return count;
     }
+
+    public boolean isObjectExist(String objectName) {
+        return _s3.doesObjectExist(_bucketName, objectName);
+    }
 }
