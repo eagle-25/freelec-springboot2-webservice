@@ -16,13 +16,13 @@ public class AttachmentController {
     private final AttachmentsService attachmentsService;
 
 
-    @GetMapping("/attachment/{id}")
+    @GetMapping("/api/v1/attachment/{id}")
     public ResponseEntity<byte[]> getObject(@PathVariable Long id) throws IOException {
         return attachmentsService
                 .getObject(id);
     }
 
-    @DeleteMapping("/attachment/{id}")
+    @DeleteMapping("/api/v1/attachment/{id}")
     public Long deleteObject(@PathVariable Long id) throws IOException {
         return attachmentsService
                 .deleteObject(id);
