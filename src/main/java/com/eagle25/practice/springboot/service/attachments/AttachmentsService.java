@@ -34,29 +34,29 @@ import java.util.UUID;
 @Service
 public class AttachmentsService {
 
-    private final AttachmentRepository _attachmentRepository;
+    private final AttachmentRepository attachmentRepository;
 
-    private AmazonS3 _s3;
+    private AmazonS3 s3;
 
     @Value("${cloud.aws.credentials.accessKey}")
-    private String _accessKey;
+    private String accessKey;
 
     @Value("${cloud.aws.credentials.secretKey}")
-    private String _secretKey;
+    private String secretKey;
 
     @Value("${cloud.aws.s3.bucket}")
-    private String _bucketName;
+    private String bucketName;
 
     @Value("${cloud.aws.region.static}")
-    private String _region;
+    private String region;
 
     @PostConstruct
     public void setS3Client() {
-        AWSCredentials credentials = new BasicAWSCredentials(this._accessKey, this._secretKey);
+        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
 
-        _s3 = AmazonS3ClientBuilder.standard()
+        s3 = AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(_region)
+                .withRegion(region)
                 .build();
     }
 
@@ -75,10 +75,10 @@ public class AttachmentsService {
     public Long upload(Long ownerPostId, MultipartFile file) throws IOException{
         var uniqueFileName =  UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-        _s3.putObject(new PutObjectRequest(_bucketName, uniqueFileName, file.getInputStream(), null)
+        s3.putObject(new PutObjectRequest(bucketName, uniqueFileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
-        return _attachmentRepository.save(Attachment
+        return attachmentRepository.save(Attachment
                         .builder()
                         .uniqueFileName(uniqueFileName)
                         .userFileName(file.getOriginalFilename())
@@ -88,7 +88,7 @@ public class AttachmentsService {
     }
 
     public ResponseEntity<byte[]> getObject(Long id) throws IOException {
-        var attachment = _attachmentRepository
+        var attachment = attachmentRepository
                 .getOne(id);
 
         // UUID가 붙은 파일 이름
@@ -100,8 +100,8 @@ public class AttachmentsService {
                 .encode(attachment.getUserFileName(), "UTF-8")
                 .replaceAll("\\+", "%20");
 
-        var s3Object = _s3
-                .getObject(new GetObjectRequest(_bucketName, uniqueFileName));
+        var s3Object = s3
+                .getObject(new GetObjectRequest(bucketName, uniqueFileName));
 
         var objectInputStream = s3Object
                 .getObjectContent();
@@ -119,19 +119,19 @@ public class AttachmentsService {
 
     @Transactional
     public Long deleteObject(Long id) {
-        var attachment = _attachmentRepository
+        var attachment = attachmentRepository
                 .getOne(id);
 
-        _s3.deleteObject(new DeleteObjectRequest(_bucketName, attachment.getUniqueFileName()));
+        s3.deleteObject(new DeleteObjectRequest(bucketName, attachment.getUniqueFileName()));
 
-        _attachmentRepository.delete(attachment);
+        attachmentRepository.delete(attachment);
 
         return id;
     }
 
     @Transactional
     public int deleteObjectsByPostId(Long postId) {
-        var targetAttachments = _attachmentRepository
+        var targetAttachments = attachmentRepository
                 .findByOwnerPostId(postId);
 
         return deleteObjects(targetAttachments);
@@ -139,7 +139,7 @@ public class AttachmentsService {
 
     @Transactional
     public int deleteObjectsById(Iterable<Long> attachmentIds) {
-        var targetAttachments = _attachmentRepository
+        var targetAttachments = attachmentRepository
                 .findAllById(attachmentIds);
 
         return deleteObjects(targetAttachments);
@@ -154,13 +154,13 @@ public class AttachmentsService {
             count += 1;
         }
 
-        _attachmentRepository
+        attachmentRepository
                 .deleteAll(attachments);
 
         return count;
     }
 
     public boolean isObjectExist(String objectName) {
-        return _s3.doesObjectExist(_bucketName, objectName);
+        return s3.doesObjectExist(bucketName, objectName);
     }
 }

@@ -14,14 +14,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 public class PostAPIController {
 
     private final PostsService postsService;
-    private final AttachmentsService _attachmentsService;
+    private final AttachmentsService attachmentsService;
 
     @PostMapping("/api/v1/posts")
     public Long save(@RequestParam("title") String title,
@@ -41,7 +40,7 @@ public class PostAPIController {
         if(files == null) return postId;
 
         try {
-            _attachmentsService
+            attachmentsService
                     .uploadAll(postId, files);
         }
         catch (IOException e) {
@@ -65,14 +64,14 @@ public class PostAPIController {
                 .sessionUser(user)
                 .build();
 
-        _attachmentsService
+        attachmentsService
                 .deleteObjectsById(removedAttachmentIds);
 
 
 
         try {
             if(addedAttachments != null) {
-                _attachmentsService
+                attachmentsService
                         .uploadAll(id, addedAttachments);
             }
         } catch (IOException e) {
@@ -92,7 +91,7 @@ public class PostAPIController {
     @DeleteMapping("/api/v1/posts/{id}")
     public Long delete(@PathVariable Long id, @LoginUser SessionUser user)
     {
-        _attachmentsService
+        attachmentsService
                 .deleteObjectsByPostId(id);
 
         postsService
