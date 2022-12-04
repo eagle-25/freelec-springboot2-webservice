@@ -1,0 +1,21 @@
+version: 0.2
+
+run-as: ec2-user
+
+env:
+  variables:
+  parameter-store:
+
+phases:
+  build:
+    commands:
+      - "echo build starts on `date`"
+      - "./gradlew clean build"
+  post_build:
+    commands:
+      - "echo build completed on 'date'"
+
+cache:
+  paths:
+    - '/root/.m2/repository'
+    - '/root/.gradle'
