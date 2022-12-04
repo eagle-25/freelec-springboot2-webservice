@@ -20,7 +20,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group 'com.eagle25.practice'
-version '1.0.2-SNAPSHOT' + new Date().format("yyyyMMddHHmmss")
+version '1.0.3-SNAPSHOT' + new Date().format("yyyyMMddHHmmss")
 
 // dependency를 받을 원격 저장소를 지정
 repositories {
@@ -45,6 +45,6 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
     implementation('org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE')
-    annotationProcessor('org.projectlombok:lombok')
-    testAnnotationProcessor('org.projectlombok:lombok')
+    annotationProcessor('org.projectlombok:lombok:1.18.20')
+    testAnnotationProcessor('org.projectlombok:lombok:1.18.20')
 }
